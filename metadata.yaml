@@ -1,0 +1,6 @@
+name: astrbot_plugin_Mini_ID # 插件唯一识别名，以 astrbot_plugin_ 前缀开头
+display_name: 迷你世界物品 ID 查询器 # 用于展示的名字，可以是方便人类阅读的名字（需要版本 >= v4.5.0，低版本不会报错，请放心填写）
+desc: AstrBot 迷你世界物品 ID 图鉴查询器 1.53.1.0 全部物品 # 插件简短描述
+version: v1.0.0 # 插件版本号。格式：v1.1.1 或者 v1.1
+author: Ling_Yue # 作者
+repo: https://github.com/JiYueJunior/astrbot_plugin_Mini_ID # 插件的仓库地址

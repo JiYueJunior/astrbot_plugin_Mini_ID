@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>迷你世界物品id查询-开发者工具-圣灵导航页</title>
+  <style>
+        .search-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .search-input {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+        }
+        .search-button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+        .search-button i {
+            font-size: 18px;
+        }
+        #itemList {
+          list-style-type: none;
+          padding: 0;
+        }
+        .item-item {
+            padding: 10px;
+            border-radius: 10px; /* 可选：添加圆角 */
+            border: 2px solid rgba(22, 191, 224, 0.5); /* 可选：添加边框 */
+            margin: 5px 0;  /* 上下外边距为10px，左右外边距为20px */
+            display: flex;
+            justify-content: space-between;
+            list-style: none; /* 去掉列表默认样式 */
+        }
+        .item-link {
+          text-decoration: none; /* 移除下划线 */
+          color: inherit; /* 继承父元素颜色 */
+          display: block; /* 设置为块级元素 */
+          padding: 10px; /* 添加内边距 */
+          width: 100%; /* 占满整个父元素宽度 */
+          box-sizing: border-box; /* 包含内边距和边框 */
+        }
+        .highlight {
+             background-color: yellow;
+             color: black;
+        }
+        .phone-link {
+            text-decoration: none;
+            color: blue;
+            cursor: pointer;
+        }
+        .load-more-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+        }
+        .load-more-button:hover {
+            background-color: #0056b3;
+        }
+  </style>
+</head>
+<body>
+  <div class="search-container">
+    <input type="text" id="searchInput" class="search-input" placeholder="搜索id" oninput="searchItems()">
+    <button id="searchButton" class="search-button" onclick="searchItems()">搜索</button>
+  </div>
+  <div class="item-item">
+    <a class="item-link" href="./help/">id取物教程</a>
+  </div>
+  <ul id="itemList"></ul>
+  <button id="loadMoreButton" class="load-more-button">加载更多</button>
+<footer style="background-color: #f2f2f2; padding: 20px; text-align: center; font-size: 14px; color: #333;">
+    <p>Copyright © 2025 圣灵导航页</p>
+</footer>
+
+    <script src="app.js"></script>
+
+</body>
+</html>
