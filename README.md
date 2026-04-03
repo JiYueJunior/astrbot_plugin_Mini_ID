@@ -4,7 +4,7 @@
 
 [![AstrBot](https://img.shields.io/badge/AstrBot-Plugin-blue.svg)](https://github.com/AstrBotDevs/AstrBot)
 [![Python](https://img.shields.io/badge/Python-3.8+-green.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/Version-1.0.0-orange.svg)]()
+[![Version](https://img.shields.io/badge/Version-1.1.0-orange.svg)]()
 
 ---
 
@@ -17,7 +17,9 @@
 - 🔍 **按名称查 ID** - 输入物品名称，快速获取对应 ID
 - 🔢 **按 ID 查名称** - 输入 ID，查看对应的物品信息
 - 📋 **浏览物品列表** - 分页查看所有物品的完整清单
-- 💡 **智能模糊搜索** - 支持部分匹配，容错率高
+- 💡 **智能模糊搜索** - 支持部分匹配、分词匹配，容错率高
+- ⚙️ **自定义显示数量** - 可设置搜索结果显示数量（1-500）
+- 🎯 **高级搜索** - 支持批量显示搜索结果，最多 500 条
 
 ### 🎯 适用场景
 
@@ -73,9 +75,11 @@ python main.py
 
 | 命令 | 用途 | 示例 |
 |------|------|------|
-| `/mini_id <名称>` | 按名称查询物品 ID | `/mini_id 钻石` |
+| `/mini_id <名称>` | 按名称查询物品 ID（快速） | `/mini_id 钻石` |
+| `/mini_search <名称> [数量]` | 高级搜索，可指定显示数量 | `/mini_search 钻石 100` |
 | `/mini_search_id <ID>` | 按 ID 查询物品名称 | `/mini_search_id 1` |
 | `/mini_list [页码]` | 浏览所有物品列表 | `/mini_list 2` |
+| `/mini_setlimit <数量>` | 设置搜索默认显示数量 | `/mini_setlimit 200` |
 | `/mini_help` | 查看帮助文档 | `/mini_help` |
 
 ### 使用示例
@@ -97,7 +101,31 @@ python main.py
 💡 该 ID 对应 1 个物品
 ```
 
-#### 3️⃣ 浏览列表
+#### 4️⃣ 高级搜索（推荐）
+```
+用户：/mini_search 工具 100
+机器人：
+🔍 高级搜索：**工具**
+找到 **150** 个相关物品 (显示前 100 个):
+• 工具台 - ID: `201` 【工具】
+• 工作台 - ID: `202` 【工具】
+...
+💡 还有 50 个结果未显示
+📊 总共有 150 个匹配物品
+```
+
+#### 5️⃣ 设置显示数量
+```
+用户：/mini_setlimit 200
+机器人：
+✅ 搜索结果显示数量已设置为 **200** 个
+
+💡 提示：
+• 使用 `/mini_search` 时将默认显示 200 个结果
+• 也可以在搜索时临时指定数量：`/mini_search 钻石 100`
+```
+
+#### 6️⃣ 浏览列表
 ```
 用户：/mini_list
 机器人：
@@ -162,6 +190,23 @@ helloworld/
 
 ## 📝 更新日志
 
+### v1.1.0 (2026-04-03) - 本次更新
+✨ **新增功能**
+- ✅ 新增 `/mini_search` 高级搜索命令，支持自定义显示数量
+- ✅ 新增 `/mini_setlimit` 设置命令，可配置默认显示数量（1-500）
+- ✅ 优化中文模糊搜索算法，支持分词匹配和二字词组匹配
+- ✅ 搜索结果智能排序，按相关度显示
+- ✅ 增加翻页功能支持，修复已知问题
+
+🐛 **问题修复**
+- ✅ 修复 `/mini_list` 翻页功能无法正常使用的问题
+- ✅ 优化页码解析逻辑，支持多种输入格式
+
+📈 **体验优化**
+- ✅ `/mini_id` 最多显示 15 个结果（原 10 个）
+- ✅ `/mini_search` 默认显示 50 个，最多支持 500 个
+- ✅ 完善错误提示和用户引导信息
+
 ### v1.0.0 (2026-04-03)
 - ✅ 实现按名称查询 ID 功能
 - ✅ 实现按 ID 查询名称功能
@@ -199,7 +244,7 @@ A: 欢迎在 GitHub Issues 中提交问题或建议。
 - **作者**: Ling_Yue
 - **基于项目**: [AstrBot](https://github.com/AstrBotDevs/AstrBot)
 - **开发语言**: Python 3.8+
-- **插件版本**: v1.0.0
+- **插件版本**: v1.1.0
 
 ---
 
