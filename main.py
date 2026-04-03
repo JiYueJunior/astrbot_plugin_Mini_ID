@@ -75,42 +75,91 @@ class MyPlugin(Star):
     async def search_item(self, event: AstrMessageEvent):
         """迷你世界物品 ID 查询 - 使用方法：/mini_id 物品名称"""
         message_str = event.message_str.strip()
-        
+            
         # 去除命令前缀（如果用户误输入了 /mini_id）
         if message_str.startswith('/mini_id'):
             message_str = message_str.replace('/mini_id', '', 1).strip()
         elif message_str.startswith('mini_id'):
             message_str = message_str.replace('mini_id', '', 1).strip()
-        
+            
         if not message_str:
             yield event.plain_result("❌ 请输入要查询的物品名称！\n\n✅ 正确用法：\n• /mini_id 地心基石\n• /mini_id 钻石\n• /mini_id 工具")
             return
-        
-        try:
-            # 首先在缓存中查找
-            found_items = []
-            for item_name, item_data in self.items_cache.items():
-                if message_str.lower() in item_name.lower() or message_str in item_name:
-                    found_items.append((item_name, item_data))
             
+        try:
+            # 首先在缓存中查找 - 支持中文模糊搜索
+            found_items = []
+            search_keywords = message_str.lower()  # 转换为小写用于比较
+                
+            for item_name, item_data in self.items_cache.items():
+                # 多种匹配方式：完全匹配、包含匹配、分词匹配
+                item_name_lower = item_name.lower()
+                    
+                # 1. 直接包含匹配（最常用）
+                if search_keywords in item_name_lower or message_str in item_name:
+                    found_items.append((item_name, item_data))
+                    continue
+                    
+                # 2. 中文分词模糊匹配（将搜索词按字符拆分）
+                if len(message_str) > 1:
+                    # 检查搜索词的每个字符是否都出现在物品名称中（顺序不限）
+                    all_chars_match = all(char in item_name for char in message_str)
+                    if all_chars_match:
+                        found_items.append((item_name, item_data))
+                        continue
+                        
+                    # 检查连续 2 个字符的组合是否匹配（二字词组匹配）
+                    for i in range(len(message_str) - 1):
+                        two_char = message_str[i:i+2]
+                        if two_char in item_name:
+                            if (item_name, item_data) not in found_items:
+                                found_items.append((item_name, item_data))
+                            break
+                        
+                    # 检查拼音首字母匹配（简单版本：只匹配常见缩写）
+                    # 例如："钻石" 可以匹配 "zs"
+                    if search_keywords.isalpha() and len(search_keywords) >= 2:
+                        # 这里可以扩展为完整的拼音匹配，暂时简化处理
+                        pass
+                
             if found_items:
+                # 对匹配结果进行排序，更匹配的排在前面
+                def match_score(item):
+                    item_name, item_data = item
+                    score = 0
+                    # 完全匹配得分最高
+                    if item_name == message_str:
+                        score += 100
+                    # 开头匹配得分较高
+                    elif item_name.startswith(message_str):
+                        score += 50
+                    # 包含匹配
+                    elif message_str in item_name:
+                        score += 30
+                    # 字符匹配
+                    elif all(char in item_name for char in message_str):
+                        score += 10
+                    return score
+                    
+                found_items.sort(key=match_score, reverse=True)
+                    
                 # 找到匹配的物品
                 result_text = f"🔍 查询到 **{len(found_items)}** 个相关物品:\n\n"
-                for item_name, item_data in found_items[:10]:  # 最多显示 10 个
+                for item_name, item_data in found_items[:15]:  # 最多显示 15 个
                     item_id = item_data['id']
                     item_type = item_data['type']
-                    result_text += f"• {item_name} - ID: `{item_id}` 【{item_type}】\n"
-                
-                if len(found_items) > 10:
-                    result_text += f"\n... 还有 {len(found_items) - 10} 个结果，请访问网站查看更多"
-                
+                    result_text += f"• {item_name} - ID: `{item_id}`【{item_type}】\n"
+                    
+                if len(found_items) > 15:
+                    result_text += f"\n💡 显示前 15 个结果，共 {len(found_items)} 个匹配物品"
+                    
                 yield event.plain_result(result_text)
             else:
                 # 如果没有找到，尝试实时爬取
                 yield event.plain_result(f"🔍 未找到 **{message_str}** 的相关信息\n\n💡 提示：请检查物品名称是否正确\n🌐 详细查询请访问：{self.base_url}")
-            
+                
             logger.info(f"用户查询迷你世界物品：{message_str}, 找到 {len(found_items)} 个结果")
-            
+                
         except Exception as e:
             logger.error(f"查询失败：{e}")
             yield event.plain_result("❌ 查询时发生错误，请稍后再试...")
@@ -164,12 +213,19 @@ class MyPlugin(Star):
         
         # 解析页码
         page = 1
-        if message_str and message_str.isdigit():
-            page = int(message_str)
-        elif message_str.startswith('/mini_list'):
-            args = message_str.replace('/mini_list', '').strip()
-            if args and args.isdigit():
-                page = int(args)
+        if message_str:
+            # 直接输入数字表示页码
+            if message_str.isdigit():
+                page = int(message_str)
+            # 如果包含命令前缀，去除前缀后提取数字
+            elif message_str.startswith('/mini_list'):
+                args = message_str.replace('/mini_list', '').strip()
+                if args and args.isdigit():
+                    page = int(args)
+            elif message_str.startswith('mini_list'):
+                args = message_str.replace('mini_list', '').strip()
+                if args and args.isdigit():
+                    page = int(args)
         
         # 每页显示的条目数
         items_per_page = 20
